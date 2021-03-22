@@ -1,17 +1,12 @@
-const dotenv = require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
-const app = express();
-const crypto = require("crypto");
-const cookie = require("cookie");
-const nonce = require("nonce")();
-const querystring = require("querystring");
-// const request = require("request-promise");
-const repository = require("./service/authentication");
-const dataBaseClient = require("./service/");
+const app = express.Router();
+const repository = require("../service/authentication");
+const dataBaseClient = require("../service/databaseClient");
 const apiKey = process.env.SHOPIFY_API_KEY;
 const apiSecret = process.env.SHOPIFY_API_SECRET;
 const scopes = "read_products";
-const forwardingAddress = "https://46ac4e88137c.ngrok.io";
+const forwardingAddress = "https://26c2140e169c.ngrok.io";
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -26,7 +21,7 @@ app.get("/shopifyInstall", async (req, res) => {
     const url = repository.generateURL({
       shop: shop,
       apiKey: apiKey,
-      scopes: "read_customers,write_orders,read_products,write_products",
+      scopes: "write_orders,read_products,write_products",
       sharedSecret: apiSecret,
       redirectUri: `${forwardingAddress}/callback`,
       nonce: nonce,
@@ -52,6 +47,7 @@ app.get("/callback", async (req, res) => {
   let responce;
   try {
     responce = await repository.getToken(returnValues);
+    console.log(responce);
   } catch (error) {
     console.log(error);
   }
@@ -60,7 +56,6 @@ app.get("/callback", async (req, res) => {
     const newStore = {
       storeName: req.query.shop,
       accessToken: responce.accessToken,
-      products: [],
     };
     let { status } = await dataBaseClient.addTokenToDB(newStore);
     status == 200
@@ -71,6 +66,4 @@ app.get("/callback", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("listen state");
-});
+module.exports = app;

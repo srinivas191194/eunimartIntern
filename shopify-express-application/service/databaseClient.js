@@ -20,4 +20,4 @@ async function getStoreAccessToken(store) {
   return res;
 }
 
-module.export = { addTokenToDB, isStoreTokenized, getStoreAccessToken };
+module.exports = { addTokenToDB, isStoreTokenized, getStoreAccessToken };

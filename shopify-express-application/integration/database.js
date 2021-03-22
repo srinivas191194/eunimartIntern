@@ -26,4 +26,4 @@ async function getStoreTokenFromDB(store) {
   return res;
 }
 
-modules.export = { addNewStore, isStoreTokenPresent, getStoreTokenFromDB };
+module.exports = { addNewStore, isStoreTokenPresent, getStoreTokenFromDB };

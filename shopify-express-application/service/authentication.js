@@ -1,7 +1,6 @@
 const crypto = require("crypto");
 const axios = require("axios");
 const CryptoJS = require("crypto-js");
-const { SSL_OP_COOKIE_EXCHANGE } = require("constants");
 
 function verifyHmac(returnValues) {
   let rebuiltString = "";
@@ -78,3 +77,5 @@ async function getToken(returnValues) {
     return { message: "URL verification failed.", status: 400 };
   }
 }
+
+module.exports = { getToken, generateURL, generateNonce };
