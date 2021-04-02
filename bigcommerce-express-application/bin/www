@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require("../app");
+var app = require("../apis/app");
 var debug = require("debug")("bigcommerce-express-application:server");
 var http = require("http");
 var connectDB = require("../loaders/mongodb");

@@ -3,9 +3,10 @@ var express = require("express");
 var router = express.Router();
 const id = process.env.client_id;
 const secret = process.env.client_secret;
-const redirect = "https://53d95c67aa26.ngrok.io/install";
+const redirect = "https://fe0df1bd508d.ngrok.io/install";
 const serviceObject = require("../service/authentication");
-/* GET home page. */
+let genetoken = "";
+
 router.get("/", function (req, res, next) {
   res.send("Hello world");
 });
@@ -21,11 +22,40 @@ router.get("/install", async (req, res) => {
   };
   // console.log(shop);
   try {
-    response = await serviceObject.getToken(shop);
-    console.log(response);
+    result = await serviceObject.getToken(shop);
+    if (result.status == 200) {
+      genetoken = result.token;
+      console.log(result);
+      console.log(genetoken);
+    } else {
+      console.log(result);
+    }
   } catch (error) {
     console.log(error);
   }
 });
 
-module.exports = router;
+router.get("/load", async (req, res) => {
+  let verification = {
+    payload: req.query.signed_payload,
+    secretcode: secret,
+    token: genetoken,
+  };
+  try {
+    result = await serviceObject.checkingFunction(verification);
+    console.log("In verification" + verification.payload);
+    if (result.status == 200) {
+      const products = res.redirect(
+        `/bigcommerce/getproducts?hash=${result.hash}`
+      );
+      console.log("Srinivas" + products);
+      // console.log(result.message);
+    } else {
+      console.log("something went wrong");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+module.exports = { router, genetoken };
